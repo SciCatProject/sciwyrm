@@ -1,0 +1,7 @@
+-r base.in
+httpx
+ipython
+nbconvert
+pytest
+pytest-randomly
+scitacean[test, sftp, ssh]
