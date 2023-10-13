@@ -5,4 +5,4 @@
 from typing import Any
 
 Json = dict[str, "Json"] | list["Json"] | str | int | float | bool | None
-Notebook = dict[str, Any]  # TODO
+Notebook = dict[str, Any]
