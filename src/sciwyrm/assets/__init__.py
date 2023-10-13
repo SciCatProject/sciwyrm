@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2023 SciCat Project (https://github.com/SciCatProject/scitacean)
+"""Asset loaders for SciWyrm."""
 
 import importlib.resources
-from ..typing import Notebook
 import json
+
+from ..typing import Notebook
 
 
 def _read_text(filename: str) -> str:
@@ -11,4 +13,5 @@ def _read_text(filename: str) -> str:
 
 
 def notebook_template_v1() -> Notebook:
+    """Return notebook template version 1."""
     return json.loads(_read_text("notebook_template_v1.ipynb"))

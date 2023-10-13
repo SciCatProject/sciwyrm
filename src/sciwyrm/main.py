@@ -4,23 +4,12 @@
 
 from __future__ import annotations
 
-from typing import Literal
-
 from fastapi import FastAPI
-from pydantic import BaseModel
 
-from . import assets
+from .notebook import v1
 from .typing import Notebook
 
-_notebook_template_v1 = assets.notebook_template_v1()
-
-
-class NotebookSpec(BaseModel):
-    """Specifies which notebook to return and how to format it."""
-
-    version: Literal["1"] = "1"
-    dataset_pids: list[str]
-
+NotebookSpec = v1.NotebookSpecV1
 
 app = FastAPI()
 
@@ -28,4 +17,4 @@ app = FastAPI()
 @app.post("/notebook")
 async def notebook(spec: NotebookSpec) -> Notebook:
     """Format and return a notebook."""
-    return _notebook_template_v1
+    return v1.format_notebook(spec)
