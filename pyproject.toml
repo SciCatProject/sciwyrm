@@ -30,10 +30,10 @@ dependencies = [
 ]
 dynamic = ["version"]
 
-#[project.urls]
-#"Documentation" = "https://scicatproject.github.io/scitacean"
-#"Bug Tracker" = "https://github.com/SciCatProject/scitacean/issues"
-#"Source" = "https://github.com/SciCatProject/scitacean"
+[project.urls]
+"Documentation" = "https://scicatproject.github.io/sciwyrm"
+"Bug Tracker" = "https://github.com/SciCatProject/sciwyrm/issues"
+"Source" = "https://github.com/SciCatProject/sciwyrm"
 
 [tool.setuptools_scm]
 
@@ -91,8 +91,8 @@ fixable = ["I001"]
 ]
 "tools/*" = ["D10"]
 "docs/conf.py" = ["D10"]
-"src/scitacean/model.py" = ["D10"]
-"src/scitacean/testing/strategies.py" = ["D401"]
+"src/sciwyrm/model.py" = ["D10"]
+"src/sciwyrm/testing/strategies.py" = ["D401"]
 
 [tool.ruff.isort]
 known-first-party = ["sciwyrm"]
