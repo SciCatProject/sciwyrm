@@ -3,7 +3,6 @@
 """Version 1 notebooks."""
 
 from copy import deepcopy
-from typing import Literal
 
 from pydantic import BaseModel
 
@@ -21,7 +20,6 @@ class NotebookSpecV1(BaseModel):
     file_server_port: int
     scicat_url: str
     scicat_token: str | None = None
-    version: Literal["1"] = "1"
 
 
 def _scicat_url_cell_source(

@@ -34,40 +34,10 @@ def exec_notebook(nb_code: str) -> dict[str, Any]:
     return namespace
 
 
-@pytest.mark.parametrize("version", ("1",))
-def test_supported_versions(sciwyrm_client, version):
-    response = sciwyrm_client.post(
-        "/notebook",
-        json={
-            "version": version,
-            "scicat_url": "https://scicat.example.com",
-            "file_server_host": "login",
-            "file_server_port": 22,
-            "dataset_pids": ["123", "456"],
-        },
-    )
-    assert response.status_code == 200
-
-
-def test_rejects_unsupported_version(sciwyrm_client):
-    response = sciwyrm_client.post(
-        "/notebook",
-        json={
-            "version": "999",
-            "scicat_url": "https://scicat.example.com",
-            "file_server_host": "login",
-            "file_server_port": 22,
-            "dataset_pids": ["123", "456"],
-        },
-    )
-    assert response.status_code == 422
-    assert "version" in response.json()["detail"][0]["loc"]
-
-
 def test_notebook_contains_expected_url(sciwyrm_client):
     url = "https://test-url.sci.cat"
     response = sciwyrm_client.post(
-        "/notebook",
+        "/notebook/v1",
         json={
             "scicat_url": url,
             "file_server_host": "login",
@@ -82,7 +52,7 @@ def test_notebook_contains_expected_url(sciwyrm_client):
 def test_notebook_contains_expected_pids(sciwyrm_client):
     pids = ["7192983", "7ca7/31a.2as"]
     response = sciwyrm_client.post(
-        "/notebook",
+        "/notebook/v1",
         json={
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": "login",
@@ -100,7 +70,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     pids1 = ["9391"]
 
     response = sciwyrm_client.post(
-        "/notebook",
+        "/notebook/v1",
         json={
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": "login",
@@ -111,7 +81,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     assert response.status_code == 200
 
     response = sciwyrm_client.post(
-        "/notebook",
+        "/notebook/v1",
         json={
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": "login",
@@ -129,7 +99,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
 def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
     file_server_host = "test.host.cat"
     response = sciwyrm_client.post(
-        "/notebook",
+        "/notebook/v1",
         json={
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": file_server_host,
@@ -144,7 +114,7 @@ def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
 def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
     file_server_port = 2200
     response = sciwyrm_client.post(
-        "/notebook",
+        "/notebook/v1",
         json={
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": "login",
@@ -159,7 +129,7 @@ def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
 def test_notebook_run(sciwyrm_client, scicat_access, scicat_token, sftp_access):
     pids = [str(INITIAL_DATASETS["raw"].pid), str(INITIAL_DATASETS["derived"].pid)]
     response = sciwyrm_client.post(
-        "/notebook",
+        "/notebook/v1",
         json={
             "scicat_url": scicat_access.url,
             "file_server_host": sftp_access.host,

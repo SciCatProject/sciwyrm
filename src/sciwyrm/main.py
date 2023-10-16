@@ -9,12 +9,10 @@ from fastapi import FastAPI
 from .notebook import v1
 from .typing import Notebook
 
-NotebookSpec = v1.NotebookSpecV1
-
 app = FastAPI()
 
 
-@app.post("/notebook")
-async def notebook(spec: NotebookSpec) -> Notebook:
+@app.post("/notebook/v1")
+def notebook_v1(spec: v1.NotebookSpecV1) -> Notebook:
     """Format and return a notebook."""
     return v1.format_notebook(spec)
