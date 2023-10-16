@@ -8,11 +8,10 @@ import nbformat
 import pytest
 from fastapi.testclient import TestClient
 from nbconvert import PythonExporter
-from scitacean.testing.backend.seed import (
-    INITIAL_DATASETS,
-)
 
 from sciwyrm.main import app
+
+from ..seed import SEED
 
 
 @pytest.fixture
@@ -21,8 +20,8 @@ def sciwyrm_client():
 
 
 @pytest.fixture
-def scicat_token(require_scicat_backend, real_client):
-    return real_client.scicat._token.get_str()
+def scicat_token(scicat_client):
+    return scicat_client.scicat._token.get_str()
 
 
 def exec_notebook(nb_code: str) -> dict[str, Any]:
@@ -126,8 +125,18 @@ def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
     assert str(file_server_port) in response.text
 
 
-def test_notebook_run(sciwyrm_client, scicat_access, scicat_token, sftp_access):
-    pids = [str(INITIAL_DATASETS["raw"].pid), str(INITIAL_DATASETS["derived"].pid)]
+# This requires a way to either pass a custom connect function to the
+# SFTPFileTransfer in the notebook or a proper auth through SciCat.
+# The former is very tricky; so waiting for the latter for now.
+@pytest.skip(reason="Authorization with the file server does not work yet.")
+def test_notebook_run(
+    sciwyrm_client,
+    scicat_access,
+    scicat_token,
+    sftp_access,
+    require_scicat_backend,
+    require_sftp_fileserver,
+):
     response = sciwyrm_client.post(
         "/notebook/v1",
         json={
@@ -135,13 +144,13 @@ def test_notebook_run(sciwyrm_client, scicat_access, scicat_token, sftp_access):
             "file_server_host": sftp_access.host,
             "file_server_port": sftp_access.port,
             "scicat_token": scicat_token,
-            "dataset_pids": pids,
+            "dataset_pids": list(map(str, SEED)),
         },
     )
     assert response.status_code == 200
 
     namespace = exec_notebook(response.text)
     datasets = namespace["datasets"]
-    assert len(datasets) == 2
-    assert str(datasets[0].pid) in pids
-    assert str(datasets[1].pid) in pids
+    assert len(datasets) == len(SEED)
+    for ds in datasets.values():
+        assert ds == SEED[ds.pid]
