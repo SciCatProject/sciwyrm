@@ -128,7 +128,7 @@ def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
 # This requires a way to either pass a custom connect function to the
 # SFTPFileTransfer in the notebook or a proper auth through SciCat.
 # The former is very tricky; so waiting for the latter for now.
-@pytest.skip(reason="Authorization with the file server does not work yet.")
+@pytest.mark.skip(reason="Authorization with the file server does not work yet.")
 def test_notebook_run(
     sciwyrm_client,
     scicat_access,
