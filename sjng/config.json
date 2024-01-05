@@ -1,0 +1,66 @@
+{
+    "version": "v0.1",
+    "templates_folder" : "templates",
+    "output_folder" : "output",
+    "defaults" : {
+        "values" : {
+            "SJNG_SCICAT_URL" : "https://staging.scicat.ess.eu",
+            "SJNT_INSTANCE_REQUESTER": "Anonymous", 
+            "SJNT_INSTANCE_DESCRIPTION": "Jupyter Notebook auto-generated with SciCat Jupyter Notebook Generator"
+        },
+        "mapping" : {
+            "scicat_url" : "SJNG_SCICAT_URL"
+        },
+        "auto": {
+            "SJNT_INSTANCE_DATETIME": "<DATETIME>", 
+            "SJNT_INSTANCE_FILE_NAME": "<UUID4>.ipynb",  
+            "SJNT_INSTANCE_NAME": "SciCat generated Jupyter Notebook <UUID4>",
+            "SJNT_INSTANCE_ID": "<UUID4>"
+        }
+    },
+    "templates": [
+        {
+            "id" : "67ddc126-9a7f-11ee-a1ea-3f215a800ed6",
+            "name" : "Starter with datasets and files",
+            "file" : "sjnt_67ddc126_9a7f_11ee_a1ea_3f215a800ed6.ipynb",
+            "parameters" : {
+                "title": "Parameters starter with datasets and files",
+                "description": "Parameters for starter template to retrieve specific files from selected datasets",
+                "type":"object",
+                "properties":{
+                    "files":{
+                        "description":"The list of files that needs to be loaded in the notebook",
+                        "type":"array",
+                        "items": {
+                            "type": "array",
+                            "items":{
+                                "type":"string",
+                                "minItems":2,
+                                "maxItems":2
+                            }
+                        }
+                    },
+                    "token" : {
+                        "description":"Authorization token used to connect to SciCat",
+                        "type":"string"
+                    },
+                    "requester": {
+                        "description": "username of the user requesting the Jupyter Notebook",
+                        "type" : "string"
+                    }
+                },
+                "required":[
+                    "files",
+                    "token"
+                ]
+            },
+            "defaults" : {
+                "mapping" : {
+                    "files" : "SJNG_DATASETS_FILES",
+                    "token" : "SJNG_SCICAT_TOKEN",
+                    "requester" : "SJNG_INSTANCE_REQUESTER"
+                }
+            }
+        }
+    ]
+}
