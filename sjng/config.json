@@ -5,15 +5,15 @@
     "defaults" : {
         "values" : {
             "SJNG_SCICAT_URL" : "https://staging.scicat.ess.eu",
-            "SJNT_INSTANCE_REQUESTER": "Anonymous", 
+            "SJNT_INSTANCE_REQUESTER": "Anonymous",
             "SJNT_INSTANCE_DESCRIPTION": "Jupyter Notebook auto-generated with SciCat Jupyter Notebook Generator"
         },
         "mapping" : {
             "scicat_url" : "SJNG_SCICAT_URL"
         },
         "auto": {
-            "SJNT_INSTANCE_DATETIME": "<DATETIME>", 
-            "SJNT_INSTANCE_FILE_NAME": "<UUID4>.ipynb",  
+            "SJNT_INSTANCE_DATETIME": "<DATETIME>",
+            "SJNT_INSTANCE_FILE_NAME": "<UUID4>.ipynb",
             "SJNT_INSTANCE_NAME": "SciCat generated Jupyter Notebook <UUID4>",
             "SJNT_INSTANCE_ID": "<UUID4>"
         }
