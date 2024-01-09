@@ -2,14 +2,10 @@
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Version 1 notebooks."""
 
-from copy import deepcopy
-
 from pydantic import BaseModel
 
 from .. import assets
 from ..typing import Notebook
-
-_notebook_template_v1 = assets.notebook_template_v1()
 
 
 class NotebookSpecV1(BaseModel):
@@ -42,7 +38,7 @@ def _pids_cell_source(pids: list[str]) -> list[str]:
 
 def format_notebook(spec: NotebookSpecV1) -> Notebook:
     """Return a formatted version 1 notebook."""
-    nb = deepcopy(_notebook_template_v1)
+    nb = assets.notebook_template(name="generic", version="1")
     cells = nb["cells"]
     cells[1]["source"] = _scicat_url_cell_source(
         spec.scicat_url, spec.file_server_host, spec.file_server_port
