@@ -38,6 +38,8 @@ def test_notebook_contains_expected_url(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook/v1",
         json={
+            "notebook_name": "generic",
+            "notebook_version": "1",
             "scicat_url": url,
             "file_server_host": "login",
             "file_server_port": 22,
@@ -53,6 +55,8 @@ def test_notebook_contains_expected_pids(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook/v1",
         json={
+            "notebook_name": "generic",
+            "notebook_version": "1",
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": "login",
             "file_server_port": 22,
@@ -71,6 +75,8 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook/v1",
         json={
+            "notebook_name": "generic",
+            "notebook_version": "1",
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": "login",
             "file_server_port": 22,
@@ -82,6 +88,8 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook/v1",
         json={
+            "notebook_name": "generic",
+            "notebook_version": "1",
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": "login",
             "file_server_port": 22,
@@ -100,6 +108,8 @@ def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook/v1",
         json={
+            "notebook_name": "generic",
+            "notebook_version": "1",
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": file_server_host,
             "file_server_port": 22,
@@ -115,6 +125,8 @@ def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook/v1",
         json={
+            "notebook_name": "generic",
+            "notebook_version": "1",
             "scicat_url": "https://test-url.sci.cat",
             "file_server_host": "login",
             "file_server_port": file_server_port,
@@ -140,6 +152,8 @@ def test_notebook_run(
     response = sciwyrm_client.post(
         "/notebook/v1",
         json={
+            "notebook_name": "generic",
+            "notebook_version": "1",
             "scicat_url": scicat_access.url,
             "file_server_host": sftp_access.host,
             "file_server_port": sftp_access.port,

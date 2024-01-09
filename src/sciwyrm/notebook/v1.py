@@ -11,6 +11,8 @@ from ..typing import Notebook
 class NotebookSpecV1(BaseModel):
     """Specifies which notebook to return and how to format it."""
 
+    notebook_name: str
+    notebook_version: str
     dataset_pids: list[str]
     file_server_host: str
     file_server_port: int
@@ -38,7 +40,9 @@ def _pids_cell_source(pids: list[str]) -> list[str]:
 
 def format_notebook(spec: NotebookSpecV1) -> Notebook:
     """Return a formatted version 1 notebook."""
-    nb = assets.notebook_template(name="generic", version="1")
+    nb = assets.notebook_template(
+        name=spec.notebook_name, version=spec.notebook_version
+    )
     cells = nb["cells"]
     cells[1]["source"] = _scicat_url_cell_source(
         spec.scicat_url, spec.file_server_host, spec.file_server_port
