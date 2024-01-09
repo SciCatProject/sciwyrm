@@ -9,5 +9,6 @@ jupyterlab
 mypy
 pip-compile-multi
 pre-commit
+uvicorn
 
 types-docutils
