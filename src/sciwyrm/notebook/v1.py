@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2023 SciCat Project (https://github.com/SciCatProject/sciwyrm)
+# Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Version 1 notebooks."""
 
 from copy import deepcopy
