@@ -1,9 +1,10 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v4.5.0
   hooks:
     - id: check-added-large-files
     - id: check-json
+    - id: check-merge-conflict
     - id: check-toml
     - id: check-yaml
     - id: detect-private-key
@@ -18,16 +19,16 @@ repos:
       args: [ "--drop-empty-cells",
               "--extra-keys 'metadata.language_info.version cell.metadata.jp-MarkdownHeadingCollapsed cell.metadata.pycharm'" ]
 - repo: https://github.com/psf/black-pre-commit-mirror
-  rev: 23.9.1
+  rev: 23.12.1
   hooks:
     - id: black
 - repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: 'v0.0.291'
+  rev: 'v0.1.11'
   hooks:
     - id: ruff
       args: ["--fix"]
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.5
+  rev: v2.2.6
   hooks:
     - id: codespell
       additional_dependencies:
