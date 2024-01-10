@@ -39,10 +39,12 @@ def test_notebook_contains_expected_url(sciwyrm_client):
         json={
             "template_name": "generic",
             "template_version": "1",
-            "scicat_url": url,
-            "file_server_host": "login",
-            "file_server_port": 22,
-            "dataset_pids": [],
+            "parameters": {
+                "scicat_url": url,
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": [],
+            },
         },
     )
     assert response.status_code == 200
@@ -56,10 +58,12 @@ def test_notebook_contains_expected_pids(sciwyrm_client):
         json={
             "template_name": "generic",
             "template_version": "1",
-            "scicat_url": "https://test-url.sci.cat",
-            "file_server_host": "login",
-            "file_server_port": 22,
-            "dataset_pids": pids,
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": pids,
+            },
         },
     )
     assert response.status_code == 200
@@ -76,10 +80,12 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
         json={
             "template_name": "generic",
             "template_version": "1",
-            "scicat_url": "https://test-url.sci.cat",
-            "file_server_host": "login",
-            "file_server_port": 22,
-            "dataset_pids": pids0,
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": pids0,
+            },
         },
     )
     assert response.status_code == 200
@@ -89,10 +95,12 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
         json={
             "template_name": "generic",
             "template_version": "1",
-            "scicat_url": "https://test-url.sci.cat",
-            "file_server_host": "login",
-            "file_server_port": 22,
-            "dataset_pids": pids1,
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": pids1,
+            },
         },
     )
     assert response.status_code == 200
@@ -109,10 +117,12 @@ def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
         json={
             "template_name": "generic",
             "template_version": "1",
-            "scicat_url": "https://test-url.sci.cat",
-            "file_server_host": file_server_host,
-            "file_server_port": 22,
-            "dataset_pids": [],
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": file_server_host,
+                "file_server_port": 22,
+                "dataset_pids": [],
+            },
         },
     )
     assert response.status_code == 200
@@ -126,10 +136,12 @@ def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
         json={
             "template_name": "generic",
             "template_version": "1",
-            "scicat_url": "https://test-url.sci.cat",
-            "file_server_host": "login",
-            "file_server_port": file_server_port,
-            "dataset_pids": [],
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": file_server_port,
+                "dataset_pids": [],
+            },
         },
     )
     assert response.status_code == 200
@@ -142,10 +154,12 @@ def test_notebook_contains_no_placeholders(sciwyrm_client):
         json={
             "template_name": "generic",
             "template_version": "1",
-            "scicat_url": "https://test-url.sci.cat",
-            "file_server_host": "login",
-            "file_server_port": 22,
-            "dataset_pids": ["abcd/123.522"],
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": ["abcd/123.522"],
+            },
         },
     )
     assert response.status_code == 200
@@ -170,11 +184,13 @@ def test_notebook_run(
         json={
             "template_name": "generic",
             "template_version": "1",
-            "scicat_url": scicat_access.url,
-            "file_server_host": sftp_access.host,
-            "file_server_port": sftp_access.port,
-            "scicat_token": scicat_token,
-            "dataset_pids": list(map(str, SEED)),
+            "parameters": {
+                "scicat_url": scicat_access.url,
+                "file_server_host": sftp_access.host,
+                "file_server_port": sftp_access.port,
+                "scicat_token": scicat_token,
+                "dataset_pids": list(map(str, SEED)),
+            },
         },
     )
     assert response.status_code == 200

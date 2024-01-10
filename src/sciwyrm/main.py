@@ -26,7 +26,7 @@ async def list_templates(
 @app.post("/notebook", response_class=JSONResponse)
 async def format_notebook(
     request: Request,
-    spec: notebook.NotebookSpecV1,
+    spec: notebook.NotebookSpec,
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
     """Format and return a notebook."""

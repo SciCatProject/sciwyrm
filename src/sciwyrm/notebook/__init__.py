@@ -7,24 +7,14 @@ from typing import Any
 from pydantic import BaseModel
 
 
-class NotebookSpecV1(BaseModel):
-    """Specifies which notebook to return and how to format it.
-
-    This is for version 1 of the endpoint.
-    The template version is independent of that.
-    """
+class NotebookSpec(BaseModel):
+    """Specifies which notebook to return and how to format it."""
 
     template_name: str
     template_version: str
-    dataset_pids: list[str]
-    file_server_host: str
-    file_server_port: int
-    scicat_url: str
-    scicat_token: str = "INSERT-YOUR-SCICAT-TOKEN-HERE"
+    parameters: dict[str, Any]
 
 
-def render_context(spec: NotebookSpecV1) -> dict[str, Any]:
+def render_context(spec: NotebookSpec) -> dict[str, Any]:
     """Return a dict that can be used to render a notebook template."""
-    return {
-        key.upper(): value for key, value in spec.model_dump(exclude_none=True).items()
-    }
+    return {key.upper(): value for key, value in spec.parameters.items()}
