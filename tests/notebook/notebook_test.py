@@ -28,7 +28,7 @@ def exec_notebook(nb_code: str) -> dict[str, Any]:
 def test_notebook_contains_expected_url(sciwyrm_client):
     url = "https://test-url.sci.cat"
     response = sciwyrm_client.post(
-        "/notebook/v1",
+        "/notebook",
         json={
             "template_name": "generic",
             "template_version": "1",
@@ -45,7 +45,7 @@ def test_notebook_contains_expected_url(sciwyrm_client):
 def test_notebook_contains_expected_pids(sciwyrm_client):
     pids = ["7192983", "7ca7/31a.2as"]
     response = sciwyrm_client.post(
-        "/notebook/v1",
+        "/notebook",
         json={
             "template_name": "generic",
             "template_version": "1",
@@ -65,7 +65,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     pids1 = ["9391"]
 
     response = sciwyrm_client.post(
-        "/notebook/v1",
+        "/notebook",
         json={
             "template_name": "generic",
             "template_version": "1",
@@ -78,7 +78,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     assert response.status_code == 200
 
     response = sciwyrm_client.post(
-        "/notebook/v1",
+        "/notebook",
         json={
             "template_name": "generic",
             "template_version": "1",
@@ -98,7 +98,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
 def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
     file_server_host = "test.host.cat"
     response = sciwyrm_client.post(
-        "/notebook/v1",
+        "/notebook",
         json={
             "template_name": "generic",
             "template_version": "1",
@@ -115,7 +115,7 @@ def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
 def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
     file_server_port = 2200
     response = sciwyrm_client.post(
-        "/notebook/v1",
+        "/notebook",
         json={
             "template_name": "generic",
             "template_version": "1",
@@ -142,7 +142,7 @@ def test_notebook_run(
     require_sftp_fileserver,
 ):
     response = sciwyrm_client.post(
-        "/notebook/v1",
+        "/notebook",
         json={
             "template_name": "generic",
             "template_version": "1",
