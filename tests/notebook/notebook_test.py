@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 
+import re
 from io import StringIO
 from typing import Any
 
@@ -133,6 +134,23 @@ def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
     )
     assert response.status_code == 200
     assert str(file_server_port) in response.text
+
+
+def test_notebook_contains_no_placeholders(sciwyrm_client):
+    response = sciwyrm_client.post(
+        "/notebook",
+        json={
+            "template_name": "generic",
+            "template_version": "1",
+            "scicat_url": "https://test-url.sci.cat",
+            "file_server_host": "login",
+            "file_server_port": 22,
+            "dataset_pids": ["abcd/123.522"],
+        },
+    )
+    assert response.status_code == 200
+    assert not re.search(r"{{[^}]*}}", response.text)
+    assert not re.search(r"{%[^}]*%}", response.text)
 
 
 # This requires a way to either pass a custom connect function to the
