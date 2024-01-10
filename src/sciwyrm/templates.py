@@ -36,6 +36,20 @@ def notebook_template_path(name: str, version: str) -> str:
     return f"notebook/{name}_v{version}.ipynb"
 
 
+def list_notebook_templates(config: AppConfig) -> list[dict[str, str]]:
+    """List available notebook templates."""
+    return [
+        _split_notebook_template_name(path.stem)
+        for path in config.template_dir.joinpath("notebook").iterdir()
+        if path.suffix == ".ipynb"
+    ]
+
+
+def _split_notebook_template_name(full_name: str) -> dict[str, str]:
+    name, version = full_name.split("_v")
+    return {"name": name, "version": version}
+
+
 @lru_cache(maxsize=1)
 def _make_template_handler(template_dir: Path) -> Jinja2Templates:
     from . import filters

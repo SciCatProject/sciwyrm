@@ -25,6 +25,12 @@ def exec_notebook(nb_code: str) -> dict[str, Any]:
     return namespace
 
 
+def test_list_notebook_templates(sciwyrm_client):
+    response = sciwyrm_client.get("/notebook/templates")
+    assert response.status_code == 200
+    assert response.json() == [{"name": "generic", "version": "1"}]
+
+
 def test_notebook_contains_expected_url(sciwyrm_client):
     url = "https://test-url.sci.cat"
     response = sciwyrm_client.post(

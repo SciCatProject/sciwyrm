@@ -9,9 +9,18 @@ from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from . import notebook
-from .templates import get_templates, notebook_template_path
+from .config import AppConfig, app_config
+from .templates import get_templates, list_notebook_templates, notebook_template_path
 
 app = FastAPI()
+
+
+@app.get("/notebook/templates")
+async def list_templates(
+    config: Annotated[AppConfig, Depends(app_config)]
+) -> JSONResponse:
+    """Return a list of available notebook templates."""
+    return JSONResponse(list_notebook_templates(config))
 
 
 @app.post("/notebook", response_class=JSONResponse)
