@@ -5,6 +5,7 @@
 
 def quote(value: str) -> str:
     """Surround a string in appropriate quotes."""
+    value = str(value)
     if '"' in value:
         if "'" in value:
             return f'"""{value}"""'

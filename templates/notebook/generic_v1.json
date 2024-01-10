@@ -1,0 +1,41 @@
+{
+  "description": "Specifies which notebook to return and how to format it.\n\nThis is for version 1 of the endpoint.\nThe template version is independent of that.",
+  "properties": {
+    "dataset_pids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dataset Pids",
+      "type": "array"
+    },
+    "file_server_host": {
+      "title": "File Server Host",
+      "type": "string"
+    },
+    "file_server_port": {
+      "title": "File Server Port",
+      "type": "integer"
+    },
+    "scicat_url": {
+      "format": "uri",
+      "maxLength": 2083,
+      "minLength": 1,
+      "title": "Scicat Url",
+      "type": "string"
+    },
+    "scicat_token": {
+      "default": "INSERT-YOUR-SCICAT-TOKEN-HERE",
+      "title": "Scicat Token",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dataset_pids",
+    "file_server_host",
+    "file_server_port",
+    "scicat_url"
+  ],
+  "additionalProperties": false,
+  "title": "Generic v1",
+  "type": "object"
+}

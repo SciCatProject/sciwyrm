@@ -167,6 +167,60 @@ def test_notebook_contains_no_placeholders(sciwyrm_client):
     assert not re.search(r"{%[^}]*%}", response.text)
 
 
+def test_notebook_bad_parameter(sciwyrm_client):
+    response = sciwyrm_client.post(
+        "/notebook",
+        json={
+            "template_name": "generic",
+            "template_version": "1",
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": "abcd/123.522",
+            },
+        },
+    )
+    assert response.status_code == 422
+    assert "dataset_pids" in response.text
+
+
+def test_notebook_missing_parameter(sciwyrm_client):
+    response = sciwyrm_client.post(
+        "/notebook",
+        json={
+            "template_name": "generic",
+            "template_version": "1",
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_port": 22,
+                "dataset_pids": ["abcd/123.522"],
+            },
+        },
+    )
+    assert response.status_code == 422
+    assert "file_server_host" in response.text
+
+
+def test_notebook_extra_parameter(sciwyrm_client):
+    response = sciwyrm_client.post(
+        "/notebook",
+        json={
+            "template_name": "generic",
+            "template_version": "1",
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": ["abcd/123.522"],
+                "extra": "not allowed",
+            },
+        },
+    )
+    assert response.status_code == 422
+    assert "extra" in response.text
+
+
 # This requires a way to either pass a custom connect function to the
 # SFTPFileTransfer in the notebook or a proper auth through SciCat.
 # The former is very tricky; so waiting for the latter for now.

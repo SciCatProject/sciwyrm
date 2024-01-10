@@ -2,9 +2,10 @@
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Template loading."""
 
+import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import Depends
 from fastapi.templating import Jinja2Templates
@@ -16,6 +17,14 @@ from .config import AppConfig, app_config
 def get_templates(config: Annotated[AppConfig, Depends(app_config)]) -> Jinja2Templates:
     """Return a handler for loading and rendering templates."""
     return _make_template_handler(config.template_dir)
+
+
+def get_template_config(name: str, version: str, config: AppConfig) -> dict[str, Any]:
+    """Return a template configuration."""
+    with config.template_dir.joinpath(
+        "notebook", f"{name}_v{version}.json"
+    ).open() as f:
+        return json.load(f)
 
 
 def notebook_template_path(name: str, version: str) -> str:
