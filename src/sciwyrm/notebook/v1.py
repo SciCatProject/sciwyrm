@@ -4,10 +4,7 @@
 
 from typing import Any
 
-from fastapi import Request, Response
 from pydantic import BaseModel
-
-from ..assets import render_notebook_template
 
 
 class NotebookSpecV1(BaseModel):
@@ -26,17 +23,8 @@ class NotebookSpecV1(BaseModel):
     scicat_token: str = "INSERT-YOUR-SCICAT-TOKEN-HERE"
 
 
-def _build_context(spec: NotebookSpecV1) -> dict[str, Any]:
+def render_context(spec: NotebookSpecV1) -> dict[str, Any]:
+    """Return a dict that can be used to render a notebook template."""
     return {
         key.upper(): value for key, value in spec.model_dump(exclude_none=True).items()
     }
-
-
-def format_notebook(request: Request, spec: NotebookSpecV1) -> Response:
-    """Return a formatted notebook."""
-    return render_notebook_template(
-        name=spec.template_name,
-        version=spec.template_version,
-        request=request,
-        context=_build_context(spec),
-    )

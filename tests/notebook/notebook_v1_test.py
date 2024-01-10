@@ -6,17 +6,9 @@ from typing import Any
 
 import nbformat
 import pytest
-from fastapi.testclient import TestClient
 from nbconvert import PythonExporter
 
-from sciwyrm.main import app
-
 from ..seed import SEED
-
-
-@pytest.fixture
-def sciwyrm_client():
-    return TestClient(app)
 
 
 @pytest.fixture

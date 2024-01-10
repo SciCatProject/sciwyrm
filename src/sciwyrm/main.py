@@ -2,17 +2,27 @@
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """The SciWym application."""
 
-from __future__ import annotations
+from typing import Annotated
 
-from fastapi import FastAPI, Request, Response
+from fastapi import Depends, FastAPI, Request, Response
 from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
 
+from .assets import get_templates
 from .notebook import v1
 
 app = FastAPI()
 
 
 @app.post("/notebook/v1", response_class=JSONResponse)
-async def notebook_v1(request: Request, spec: v1.NotebookSpecV1) -> Response:
+async def format_notebook(
+    request: Request,
+    spec: v1.NotebookSpecV1,
+    templates: Annotated[Jinja2Templates, Depends(get_templates)],
+) -> Response:
     """Format and return a notebook."""
-    return v1.format_notebook(request, spec)
+    return templates.TemplateResponse(
+        name=f"notebook/{spec.template_name}_v{spec.template_version}.ipynb",
+        request=request,
+        context=v1.render_context(spec),
+    )
