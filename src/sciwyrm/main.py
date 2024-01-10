@@ -4,15 +4,15 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import JSONResponse
 
 from .notebook import v1
-from .typing import Notebook
 
 app = FastAPI()
 
 
-@app.post("/notebook/v1")
-def notebook_v1(spec: v1.NotebookSpecV1) -> Notebook:
+@app.post("/notebook/v1", response_class=JSONResponse)
+async def notebook_v1(request: Request, spec: v1.NotebookSpecV1) -> Response:
     """Format and return a notebook."""
-    return v1.format_notebook(spec)
+    return v1.format_notebook(request, spec)

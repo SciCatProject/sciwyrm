@@ -2,51 +2,41 @@
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Version 1 notebooks."""
 
+from typing import Any
+
+from fastapi import Request, Response
 from pydantic import BaseModel
 
-from .. import assets
-from ..typing import Notebook
+from ..assets import render_notebook_template
 
 
 class NotebookSpecV1(BaseModel):
-    """Specifies which notebook to return and how to format it."""
+    """Specifies which notebook to return and how to format it.
 
-    notebook_name: str
-    notebook_version: str
+    This is for version 1 of the endpoint.
+    The template version is independent of that.
+    """
+
+    template_name: str
+    template_version: str
     dataset_pids: list[str]
     file_server_host: str
     file_server_port: int
     scicat_url: str
-    scicat_token: str | None = None
+    scicat_token: str = "INSERT-YOUR-SCICAT-TOKEN-HERE"
 
 
-def _scicat_url_cell_source(
-    scicat_url: str, file_server_host: str, file_server_port: int
-) -> list[str]:
-    return [
-        f'scicat_url = "{scicat_url}"\n',
-        f'file_server_host = "{file_server_host}"\n',
-        f'file_server_port = "{file_server_port}"',
-    ]
+def _build_context(spec: NotebookSpecV1) -> dict[str, Any]:
+    return {
+        key.upper(): value for key, value in spec.model_dump(exclude_none=True).items()
+    }
 
 
-def _scicat_token_cell_source(scicat_token: str | None) -> list[str]:
-    return [f'scicat_token = "{scicat_token or "INSERT-YOUR-SCICAT-TOKEN-HERE"}"']
-
-
-def _pids_cell_source(pids: list[str]) -> list[str]:
-    return ["input_dataset_pids = [\n", *(f'    "{pid}",\n' for pid in pids), "]"]
-
-
-def format_notebook(spec: NotebookSpecV1) -> Notebook:
-    """Return a formatted version 1 notebook."""
-    nb = assets.notebook_template(
-        name=spec.notebook_name, version=spec.notebook_version
+def format_notebook(request: Request, spec: NotebookSpecV1) -> Response:
+    """Return a formatted notebook."""
+    return render_notebook_template(
+        name=spec.template_name,
+        version=spec.template_version,
+        request=request,
+        context=_build_context(spec),
     )
-    cells = nb["cells"]
-    cells[1]["source"] = _scicat_url_cell_source(
-        spec.scicat_url, spec.file_server_host, spec.file_server_port
-    )
-    cells[2]["source"] = _scicat_token_cell_source(spec.scicat_token)
-    cells[3]["source"] = _pids_cell_source(spec.dataset_pids)
-    return nb

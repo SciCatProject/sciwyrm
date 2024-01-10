@@ -9,7 +9,7 @@
 -r test.txt
 accessible-pygments==0.0.4
     # via pydata-sphinx-theme
-alabaster==0.7.15
+alabaster==0.7.16
     # via sphinx
 autodoc-pydantic==2.0.1
     # via -r requirements/docs.in
