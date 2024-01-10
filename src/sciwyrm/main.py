@@ -8,8 +8,8 @@ from fastapi import Depends, FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 
-from .assets import get_templates
 from .notebook import v1
+from .templates import get_templates, notebook_template_path
 
 app = FastAPI()
 
@@ -22,7 +22,7 @@ async def format_notebook(
 ) -> Response:
     """Format and return a notebook."""
     return templates.TemplateResponse(
-        name=f"notebook/{spec.template_name}_v{spec.template_version}.ipynb",
+        name=notebook_template_path(spec.template_name, spec.template_version),
         request=request,
         context=v1.render_context(spec),
     )

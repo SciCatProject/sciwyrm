@@ -57,13 +57,7 @@ def scicat_client(
 
 
 def _app_config_override():
-    return AppConfig(
-        template_dir=Path(__file__).resolve().parent.parent
-        / "src"
-        / "sciwyrm"
-        / "assets"
-        / "templates"
-    )
+    return AppConfig(template_dir=Path(__file__).resolve().parent.parent / "templates")
 
 
 @pytest.fixture(scope="session")
