@@ -58,7 +58,7 @@ httpcore==1.0.2
     # via httpx
 httpx==0.26.0
     # via -r requirements/test.in
-hypothesis==6.92.6
+hypothesis==6.92.7
     # via scitacean
 iniconfig==2.0.0
     # via pytest

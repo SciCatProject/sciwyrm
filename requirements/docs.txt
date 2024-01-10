@@ -47,12 +47,8 @@ nest-asyncio==1.5.8
     # via ipykernel
 psutil==5.9.7
     # via ipykernel
-pydantic-settings==2.1.0
-    # via autodoc-pydantic
 pydata-sphinx-theme==0.14.0
     # via -r requirements/docs.in
-python-dotenv==1.0.0
-    # via pydantic-settings
 snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.2.6

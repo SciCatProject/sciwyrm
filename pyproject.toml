@@ -29,6 +29,7 @@ dependencies = [
     "fastapi >= 0.108",
     "jinja2",
     "pydantic",
+    "pydantic-settings",
 ]
 dynamic = ["version"]
 
