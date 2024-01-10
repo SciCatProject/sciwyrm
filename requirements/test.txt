@@ -8,11 +8,6 @@
 -r base.txt
 asttokens==2.4.1
     # via stack-data
-attrs==23.2.0
-    # via
-    #   hypothesis
-    #   jsonschema
-    #   referencing
 bcrypt==4.1.2
     # via paramiko
 beautifulsoup4==4.12.2
@@ -68,10 +63,6 @@ ipython==8.20.0
     # via -r requirements/test.in
 jedi==0.19.1
     # via ipython
-jsonschema==4.20.0
-    # via nbformat
-jsonschema-specifications==2023.12.1
-    # via jsonschema
 jupyter-client==8.6.0
     # via nbclient
 jupyter-core==5.7.1
@@ -140,16 +131,8 @@ pyyaml==6.0.1
     # via scitacean
 pyzmq==25.1.2
     # via jupyter-client
-referencing==0.32.1
-    # via
-    #   jsonschema
-    #   jsonschema-specifications
 requests==2.31.0
     # via scitacean
-rpds-py==0.16.2
-    # via
-    #   jsonschema
-    #   referencing
 scitacean[sftp,ssh,test]==23.10.0
     # via -r requirements/test.in
 six==1.16.0

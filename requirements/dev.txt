@@ -37,6 +37,7 @@ jsonpointer==2.4
     # via jsonschema
 jsonschema[format-nongpl]==4.20.0
     # via
+    #   -r requirements/base.in
     #   jupyter-events
     #   jupyterlab-server
     #   nbformat
