@@ -7,8 +7,8 @@ from typing import Any
 import jsonschema
 from pydantic import BaseModel, ValidationInfo, field_validator
 
-from ..config import app_config
-from ..templates import get_template_config
+from .config import app_config
+from .templates import get_template_config
 
 
 class NotebookSpec(BaseModel):
