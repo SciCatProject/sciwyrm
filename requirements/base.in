@@ -1,3 +1,4 @@
+email-validator
 fastapi >= 0.108
 jinja2
 jsonschema
