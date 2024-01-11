@@ -11,8 +11,27 @@ from typing import Annotated, Any
 from fastapi import Depends
 from fastapi.templating import Jinja2Templates
 from jinja2 import Environment, FileSystemLoader
+from pydantic import BaseModel, EmailStr
 
 from .config import AppConfig, app_config
+
+
+class Author(BaseModel):
+    """Author of the template."""
+
+    name: str
+    email: EmailStr | None = None
+
+
+class NotebookTemplateConfig(BaseModel):
+    """Template configuration."""
+
+    name: str
+    version: str
+    description: str
+    authors: list[Author]
+    parameter_schema: dict[str, Any]
+    template_hash: str
 
 
 def get_templates(config: Annotated[AppConfig, Depends(app_config)]) -> Jinja2Templates:
@@ -20,20 +39,42 @@ def get_templates(config: Annotated[AppConfig, Depends(app_config)]) -> Jinja2Te
     return _make_template_handler(config.template_dir)
 
 
-def get_template_config(
-    name: str, version: str, config: AppConfig, category: str = "notebook"
-) -> dict[str, Any]:
-    """Return a template configuration."""
-    return _load_template_config(
-        config.template_dir.joinpath(category, f"{name}_v{version}.json")
+@lru_cache(maxsize=1)
+def _make_template_handler(template_dir: Path) -> Jinja2Templates:
+    from . import filters
+    from .logging import get_logger
+
+    get_logger().info("Loading templates from %s", template_dir)
+    templates = Jinja2Templates(
+        env=Environment(
+            loader=FileSystemLoader(template_dir),
+            autoescape=True,
+        )
     )
+    templates.env.filters["quote"] = filters.quote
+    templates.env.filters["je"] = filters.json_escape
+    return templates
+
+
+def get_notebook_template_config(
+    name: str, version: str, config: AppConfig
+) -> NotebookTemplateConfig:
+    """Return a template configuration."""
+    return _load_notebook_template_config(name, version, config.template_dir)
 
 
 @lru_cache()
-def _load_template_config(path: Path) -> dict[str, Any]:
+def _load_notebook_template_config(
+    name: str, version: str, template_dir: Path
+) -> NotebookTemplateConfig:
     # AppConfig cannot be hashed and used with lru_cache.
+    path = template_dir.joinpath("notebook", f"{name}_v{version}.json")
     with path.open() as f:
-        return json.load(f)
+        fields = json.load(f)
+        fields["name"] = name
+        fields["version"] = version
+        fields["template_hash"] = _notebook_template_hash(path)
+        return NotebookTemplateConfig(**fields)
 
 
 def notebook_template_path(name: str, version: str) -> str:
@@ -63,35 +104,11 @@ def list_notebook_templates(config: AppConfig) -> list[dict[str, str]]:
     ]
 
 
-def notebook_template_hash(name: str, version: str, config: AppConfig) -> str:
+def _notebook_template_hash(path: Path) -> str:
     """Return a hash for a notebook template."""
-    return (
-        "blake2b:"
-        + hashlib.blake2b(
-            config.template_dir.joinpath(
-                notebook_template_path(name, version)
-            ).read_bytes()
-        ).hexdigest()
-    )
+    return "blake2b:" + hashlib.blake2b(path.read_bytes()).hexdigest()
 
 
 def _split_notebook_template_name(full_name: str) -> dict[str, str]:
     name, version = full_name.split("_v")
     return {"name": name, "version": version}
-
-
-@lru_cache(maxsize=1)
-def _make_template_handler(template_dir: Path) -> Jinja2Templates:
-    from . import filters
-    from .logging import get_logger
-
-    get_logger().info("Loading templates from %s", template_dir)
-    templates = Jinja2Templates(
-        env=Environment(
-            loader=FileSystemLoader(template_dir),
-            autoescape=True,
-        )
-    )
-    templates.env.filters["quote"] = filters.quote
-    templates.env.filters["je"] = filters.json_escape
-    return templates

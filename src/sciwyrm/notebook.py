@@ -2,15 +2,16 @@
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Notebook handling."""
 
+from __future__ import annotations
+
 from datetime import datetime, timezone
 from typing import Any
 
 import jsonschema
-from pydantic import BaseModel, ValidationInfo, field_validator
+from pydantic import BaseModel, model_validator
 from pydantic_core import PydanticCustomError
 
-from .config import app_config
-from .templates import get_template_config, notebook_template_hash
+from .templates import NotebookTemplateConfig
 
 
 class NotebookSpec(BaseModel):
@@ -20,28 +21,36 @@ class NotebookSpec(BaseModel):
     template_version: str
     parameters: dict[str, Any]
 
-    @field_validator("parameters")
-    @classmethod
-    def validate_parameters(
-        cls, parameters: Any, info: ValidationInfo
-    ) -> dict[str, Any]:
-        """Validate parameters against the template schema."""
-        if not isinstance(parameters, dict):
-            raise AssertionError("'parameters' must be a dict.")
+    def with_config(self, config: NotebookTemplateConfig) -> NotebookSpecWithConfig:
+        """Return a new spec with template config."""
+        return NotebookSpecWithConfig(
+            **{**self.model_dump(), "config": config},
+        )
 
-        schema = get_template_config(
-            info.data["template_name"], info.data["template_version"], app_config()
-        )["parameter_schema"]
+
+class NotebookSpecWithConfig(NotebookSpec):
+    """Internal spec with added template config.
+
+    This should not be exposed to the API because notebook template configs
+    are provided by the server.
+    """
+
+    config: NotebookTemplateConfig
+
+    @model_validator(mode="after")
+    def validate_parameters(self) -> NotebookSpecWithConfig:
+        """Validate parameters against the template schema."""
+        schema = self.config.parameter_schema
         try:
-            jsonschema.validate(parameters, schema)
+            jsonschema.validate(self.parameters, schema)
         except jsonschema.ValidationError as err:
             raise PydanticCustomError(
                 "Validation Error",
                 "{message}",
                 {
                     "message": err.message,
-                    "template_name": info.data["template_name"],
-                    "template_version": info.data["template_version"],
+                    "template_name": self.template_name,
+                    "template_version": self.template_version,
                     "instance": err.instance,
                     "jsonpath": err.json_path,
                     "schema": err.schema,
@@ -50,28 +59,24 @@ class NotebookSpec(BaseModel):
                     "validator_value": err.validator_value,
                 },
             ) from None
-        return parameters
+        return self
 
 
-def render_context(spec: NotebookSpec) -> dict[str, Any]:
+def render_context(spec: NotebookSpecWithConfig) -> dict[str, Any]:
     """Return a dict that can be used to render a notebook template."""
     context = spec.parameters | notebook_metadata(spec)
     return {key.upper(): value for key, value in context.items()}
 
 
-def notebook_metadata(spec: NotebookSpec) -> dict[str, Any]:
+def notebook_metadata(spec: NotebookSpecWithConfig) -> dict[str, Any]:
     """Return metadata for a requested notebook.
 
     Here, metadata is any data that was not explicitly requested by the user.
     """
-    app_conf = app_config()
-    config = get_template_config(spec.template_name, spec.template_version, app_conf)
     return {
         "template_name": spec.template_name,
         "template_version": spec.template_version,
-        "template_authors": config["authors"],
+        "template_authors": [author.model_dump() for author in spec.config.authors],
         "template_rendered": datetime.now(tz=timezone.utc).isoformat(),
-        "template_hash": notebook_template_hash(
-            spec.template_name, spec.template_version, app_conf
-        ),
+        "template_hash": spec.config.template_hash,
     }

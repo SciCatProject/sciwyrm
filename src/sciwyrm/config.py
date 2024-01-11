@@ -81,7 +81,11 @@ class AppConfig(BaseSettings):
 
 @lru_cache(maxsize=1)
 def app_config() -> AppConfig:
-    """Return the application config."""
+    """Return the application config.
+
+    This function should only be called by the app.
+    Otherwise, tests cannot override the configuration.
+    """
     from .logging import get_logger
 
     config = AppConfig()
