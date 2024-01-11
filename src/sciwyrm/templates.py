@@ -2,6 +2,7 @@
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Template loading."""
 
+import hashlib
 import json
 from functools import lru_cache
 from pathlib import Path
@@ -19,11 +20,19 @@ def get_templates(config: Annotated[AppConfig, Depends(app_config)]) -> Jinja2Te
     return _make_template_handler(config.template_dir)
 
 
-def get_template_config(name: str, version: str, config: AppConfig) -> dict[str, Any]:
+def get_template_config(
+    name: str, version: str, config: AppConfig, category: str = "notebook"
+) -> dict[str, Any]:
     """Return a template configuration."""
-    with config.template_dir.joinpath(
-        "notebook", f"{name}_v{version}.json"
-    ).open() as f:
+    return _load_template_config(
+        config.template_dir.joinpath(category, f"{name}_v{version}.json")
+    )
+
+
+@lru_cache()
+def _load_template_config(path: Path) -> dict[str, Any]:
+    # AppConfig cannot be hashed and used with lru_cache.
+    with path.open() as f:
         return json.load(f)
 
 
@@ -52,6 +61,18 @@ def list_notebook_templates(config: AppConfig) -> list[dict[str, str]]:
         for path in config.template_dir.joinpath("notebook").iterdir()
         if path.suffix == ".ipynb"
     ]
+
+
+def notebook_template_hash(name: str, version: str, config: AppConfig) -> str:
+    """Return a hash for a notebook template."""
+    return (
+        "blake2b:"
+        + hashlib.blake2b(
+            config.template_dir.joinpath(
+                notebook_template_path(name, version)
+            ).read_bytes()
+        ).hexdigest()
+    )
 
 
 def _split_notebook_template_name(full_name: str) -> dict[str, str]:

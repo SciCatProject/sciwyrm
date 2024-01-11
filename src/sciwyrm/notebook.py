@@ -2,6 +2,7 @@
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Notebook handling."""
 
+from datetime import datetime, timezone
 from typing import Any
 
 import jsonschema
@@ -9,7 +10,7 @@ from pydantic import BaseModel, ValidationInfo, field_validator
 from pydantic_core import PydanticCustomError
 
 from .config import app_config
-from .templates import get_template_config
+from .templates import get_template_config, notebook_template_hash
 
 
 class NotebookSpec(BaseModel):
@@ -30,7 +31,7 @@ class NotebookSpec(BaseModel):
 
         schema = get_template_config(
             info.data["template_name"], info.data["template_version"], app_config()
-        )
+        )["parameter_schema"]
         try:
             jsonschema.validate(parameters, schema)
         except jsonschema.ValidationError as err:
@@ -54,4 +55,23 @@ class NotebookSpec(BaseModel):
 
 def render_context(spec: NotebookSpec) -> dict[str, Any]:
     """Return a dict that can be used to render a notebook template."""
-    return {key.upper(): value for key, value in spec.parameters.items()}
+    context = spec.parameters | notebook_metadata(spec)
+    return {key.upper(): value for key, value in context.items()}
+
+
+def notebook_metadata(spec: NotebookSpec) -> dict[str, Any]:
+    """Return metadata for a requested notebook.
+
+    Here, metadata is any data that was not explicitly requested by the user.
+    """
+    app_conf = app_config()
+    config = get_template_config(spec.template_name, spec.template_version, app_conf)
+    return {
+        "template_name": spec.template_name,
+        "template_version": spec.template_version,
+        "template_authors": config["authors"],
+        "template_rendered": datetime.now(tz=timezone.utc).isoformat(),
+        "template_hash": notebook_template_hash(
+            spec.template_name, spec.template_version, app_conf
+        ),
+    }

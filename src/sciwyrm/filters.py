@@ -15,4 +15,4 @@ def quote(value: str) -> str:
 
 def json_escape(value: str) -> str:
     """Escape a string to be used in JSON."""
-    return value.replace("\\", "\\\\").replace('"', '\\"')
+    return str(value).replace("\\", "\\\\").replace('"', '\\"')

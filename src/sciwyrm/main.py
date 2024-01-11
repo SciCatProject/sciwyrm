@@ -2,6 +2,7 @@
 # Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """The SciWym application."""
 
+import json
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Request, Response
@@ -30,8 +31,11 @@ async def format_notebook(
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
 ) -> Response:
     """Format and return a notebook."""
-    return templates.TemplateResponse(
+    formatted = templates.TemplateResponse(
         name=notebook_template_path(spec.template_name, spec.template_version),
         request=request,
         context=notebook.render_context(spec),
     )
+    nb = json.loads(formatted.body)
+    nb["metadata"]["sciwyrm"] = notebook.notebook_metadata(spec)
+    return JSONResponse(nb)

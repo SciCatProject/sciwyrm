@@ -32,6 +32,24 @@ def test_list_notebook_templates(sciwyrm_client):
     assert response.json() == [{"name": "generic", "version": "1"}]
 
 
+def test_notebook_is_valid_json(sciwyrm_client):
+    response = sciwyrm_client.post(
+        "/notebook",
+        json={
+            "template_name": "generic",
+            "template_version": "1",
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": ["abcd/123.522"],
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert response.json() is not None
+
+
 def test_notebook_contains_expected_url(sciwyrm_client):
     url = "https://test-url.sci.cat"
     response = sciwyrm_client.post(
@@ -165,6 +183,29 @@ def test_notebook_contains_no_placeholders(sciwyrm_client):
     assert response.status_code == 200
     assert not re.search(r"{{[^}]*}}", response.text)
     assert not re.search(r"{%[^}]*%}", response.text)
+
+
+def test_notebook_contains_metadata(sciwyrm_client):
+    response = sciwyrm_client.post(
+        "/notebook",
+        json={
+            "template_name": "generic",
+            "template_version": "1",
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": ["abcd/123.522"],
+            },
+        },
+    )
+    assert response.status_code == 200
+    metadata = response.json()["metadata"]["sciwyrm"]
+    assert metadata["template_name"] == "generic"
+    assert metadata["template_version"] == "1"
+    assert metadata["template_authors"] == [
+        {"name": "Jan-Lukas Wynen", "email": "jan-lukas.wynen@ess.eu"}
+    ]
 
 
 def test_notebook_bad_parameter(sciwyrm_client):
