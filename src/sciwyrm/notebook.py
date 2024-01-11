@@ -6,6 +6,7 @@ from typing import Any
 
 import jsonschema
 from pydantic import BaseModel, ValidationInfo, field_validator
+from pydantic_core import PydanticCustomError
 
 from .config import app_config
 from .templates import get_template_config
@@ -25,7 +26,7 @@ class NotebookSpec(BaseModel):
     ) -> dict[str, Any]:
         """Validate parameters against the template schema."""
         if not isinstance(parameters, dict):
-            raise AssertionError("Parameters must be a dict.")
+            raise AssertionError("'parameters' must be a dict.")
 
         schema = get_template_config(
             info.data["template_name"], info.data["template_version"], app_config()
@@ -33,8 +34,21 @@ class NotebookSpec(BaseModel):
         try:
             jsonschema.validate(parameters, schema)
         except jsonschema.ValidationError as err:
-            # TODO better message
-            raise AssertionError(str(err)) from None
+            raise PydanticCustomError(
+                "Validation Error",
+                "{message}",
+                {
+                    "message": err.message,
+                    "template_name": info.data["template_name"],
+                    "template_version": info.data["template_version"],
+                    "instance": err.instance,
+                    "jsonpath": err.json_path,
+                    "schema": err.schema,
+                    "schema_path": err.schema_path,
+                    "validator": err.validator,
+                    "validator_value": err.validator_value,
+                },
+            ) from None
         return parameters
 
 
