@@ -1,4 +1,7 @@
 {
+  "submission_name": "generic",
+  "display_name": "Generic",
+  "version": "1",
   "description": "Generic template for downloading datasets and files.",
   "authors": [
     {

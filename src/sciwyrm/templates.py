@@ -26,7 +26,8 @@ class Author(BaseModel):
 class NotebookTemplateConfig(BaseModel):
     """Template configuration."""
 
-    name: str
+    submission_name: str
+    display_name: str
     version: str
     description: str
     authors: list[Author]
@@ -57,48 +58,44 @@ def _make_template_handler(template_dir: Path) -> Jinja2Templates:
 
 
 def get_notebook_template_config(
-    name: str, version: str, config: AppConfig
+    template_id: str, config: AppConfig
 ) -> NotebookTemplateConfig:
     """Return a template configuration."""
-    return _load_notebook_template_config(name, version, config.template_dir)
+    return _load_notebook_template_config(template_id, config.template_dir)
 
 
 @lru_cache()
 def _load_notebook_template_config(
-    name: str, version: str, template_dir: Path
+    template_id: str, template_dir: Path
 ) -> NotebookTemplateConfig:
     # AppConfig cannot be hashed and used with lru_cache.
-    path = template_dir.joinpath("notebook", f"{name}_v{version}.json")
+    path = template_dir.joinpath("notebook", f"{template_id}.json")
     with path.open() as f:
         fields = json.load(f)
-        fields["name"] = name
-        fields["version"] = version
         fields["template_hash"] = _notebook_template_hash(path)
         return NotebookTemplateConfig(**fields)
 
 
-def notebook_template_path(name: str, version: str) -> str:
+def notebook_template_path(template_id: str) -> str:
     """Return the relative path to a given notebook template.
 
     Parameters
     ----------
-    name:
-        Name of the template.
-    version:
-        Version of the template.
+    template_id:
+        Unique ID of the template.
 
     Returns
     -------
     :
         The path to the template relative to the base template directory.
     """
-    return f"notebook/{name}_v{version}.ipynb"
+    return f"notebook/{template_id}.ipynb"
 
 
-def list_notebook_templates(config: AppConfig) -> list[dict[str, str]]:
+def list_notebook_templates(config: AppConfig) -> list[str]:
     """List available notebook templates."""
     return [
-        _split_notebook_template_name(path.stem)
+        path.stem
         for path in config.template_dir.joinpath("notebook").iterdir()
         if path.suffix == ".ipynb"
     ]
@@ -107,8 +104,3 @@ def list_notebook_templates(config: AppConfig) -> list[dict[str, str]]:
 def _notebook_template_hash(path: Path) -> str:
     """Return a hash for a notebook template."""
     return "blake2b:" + hashlib.blake2b(path.read_bytes()).hexdigest()
-
-
-def _split_notebook_template_name(full_name: str) -> dict[str, str]:
-    name, version = full_name.split("_v")
-    return {"name": name, "version": version}

@@ -11,6 +11,8 @@ from nbconvert import PythonExporter
 
 from ..seed import SEED
 
+TEMPLATE_IDS = {"generic": "b32f6992-0355-4759-b780-ececd4957c23"}
+
 
 @pytest.fixture
 def scicat_token(scicat_client):
@@ -29,15 +31,14 @@ def exec_notebook(nb_code: str) -> dict[str, Any]:
 def test_list_notebook_templates(sciwyrm_client):
     response = sciwyrm_client.get("/notebook/templates")
     assert response.status_code == 200
-    assert response.json() == [{"name": "generic", "version": "1"}]
+    assert response.json() == [TEMPLATE_IDS["generic"]]
 
 
 def test_notebook_is_valid_json(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -55,8 +56,7 @@ def test_notebook_contains_expected_url(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": url,
                 "file_server_host": "login",
@@ -74,8 +74,7 @@ def test_notebook_contains_expected_pids(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -96,8 +95,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -111,8 +109,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -133,8 +130,7 @@ def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": file_server_host,
@@ -152,8 +148,7 @@ def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -170,8 +165,7 @@ def test_notebook_contains_no_placeholders(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -189,8 +183,7 @@ def test_notebook_contains_metadata(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -201,7 +194,8 @@ def test_notebook_contains_metadata(sciwyrm_client):
     )
     assert response.status_code == 200
     metadata = response.json()["metadata"]["sciwyrm"]
-    assert metadata["template_name"] == "generic"
+    assert metadata["template_id"] == TEMPLATE_IDS["generic"]
+    assert metadata["template_submission_name"] == "generic"
     assert metadata["template_version"] == "1"
     assert metadata["template_authors"] == [
         {"name": "Jan-Lukas Wynen", "email": "jan-lukas.wynen@ess.eu"}
@@ -212,8 +206,7 @@ def test_notebook_bad_parameter(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -230,8 +223,7 @@ def test_notebook_missing_parameter(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_port": 22,
@@ -247,8 +239,7 @@ def test_notebook_extra_parameter(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": "https://test-url.sci.cat",
                 "file_server_host": "login",
@@ -277,8 +268,7 @@ def test_notebook_run(
     response = sciwyrm_client.post(
         "/notebook",
         json={
-            "template_name": "generic",
-            "template_version": "1",
+            "template_id": TEMPLATE_IDS["generic"],
             "parameters": {
                 "scicat_url": scicat_access.url,
                 "file_server_host": sftp_access.host,

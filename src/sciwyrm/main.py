@@ -35,11 +35,7 @@ def _inject_app_config(
     spec: notebook.NotebookSpec, config: Annotated[AppConfig, Depends(app_config)]
 ) -> notebook.NotebookSpecWithConfig:
     try:
-        return spec.with_config(
-            get_notebook_template_config(
-                spec.template_name, spec.template_version, config
-            )
-        )
+        return spec.with_config(get_notebook_template_config(spec.template_id, config))
     except ValidationError as exc:
         # FastAPI cannot handle a ValidationError at this point.
         # So make it look like this came from the initial spec.
@@ -57,7 +53,7 @@ async def format_notebook(
 ) -> Response:
     """Format and return a notebook."""
     formatted = templates.TemplateResponse(
-        name=notebook_template_path(spec.template_name, spec.template_version),
+        name=notebook_template_path(spec.template_id),
         request=request,
         context=notebook.render_context(spec),
     )
