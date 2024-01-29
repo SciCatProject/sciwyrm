@@ -8,17 +8,25 @@ from datetime import datetime, timezone
 from typing import Any
 
 import jsonschema
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 from pydantic_core import PydanticCustomError
 
-from .templates import NotebookTemplateConfig
+from .config import AppConfig
+from .templates import (
+    NotebookTemplateConfig,
+    get_notebook_template_config,
+    list_notebook_templates,
+)
 
 
 class NotebookSpec(BaseModel):
     """Specifies which notebook to return and how to format it."""
 
-    template_id: str
-    parameters: dict[str, Any]
+    template_id: str = Field(description="ID of the template to render.")
+    parameters: dict[str, Any] = Field(
+        description="Parameters for the template. "
+        "The schema depends on the concrete template."
+    )
 
     def with_config(self, config: NotebookTemplateConfig) -> NotebookSpecWithConfig:
         """Return a new spec with template config."""
@@ -58,6 +66,35 @@ class NotebookSpecWithConfig(NotebookSpec):
                 },
             ) from None
         return self
+
+
+class TemplateSummary(BaseModel):
+    """Short overview of a notebook template."""
+
+    template_id: str = Field(description="ID of the template.")
+    submission_name: str = Field(description="Template name given during submission.")
+    display_name: str = Field(description="Template name meant for display to users.")
+    version: str = Field(description="Template version.")
+
+    @classmethod
+    def from_config(
+        cls, template_id: str, config: NotebookTemplateConfig
+    ) -> TemplateSummary:
+        """Construct from a template config."""
+        return cls(
+            template_id=template_id,
+            submission_name=config.submission_name,
+            display_name=config.display_name,
+            version=config.version,
+        )
+
+
+def available_templates(config: AppConfig) -> list[TemplateSummary]:
+    """Summarise available templates."""
+    return [
+        TemplateSummary.from_config(tid, get_notebook_template_config(tid, config))
+        for tid in list_notebook_templates(config)
+    ]
 
 
 def render_context(spec: NotebookSpecWithConfig) -> dict[str, Any]:

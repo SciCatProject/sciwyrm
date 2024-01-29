@@ -16,19 +16,18 @@ from .config import AppConfig, app_config
 from .templates import (
     get_notebook_template_config,
     get_templates,
-    list_notebook_templates,
     notebook_template_path,
 )
 
 app = FastAPI()
 
 
-@app.get("/notebook/templates")
+@app.get("/notebook/templates", response_description="Available templates")
 async def list_templates(
     config: Annotated[AppConfig, Depends(app_config)]
-) -> JSONResponse:
+) -> list[notebook.TemplateSummary]:
     """Return a list of available notebook templates."""
-    return JSONResponse(list_notebook_templates(config))
+    return notebook.available_templates(config)
 
 
 def _inject_app_config(
@@ -45,7 +44,7 @@ def _inject_app_config(
         raise RequestValidationError(errors) from None
 
 
-@app.post("/notebook", response_class=JSONResponse)
+@app.post("/notebook", response_model=dict, response_description="Rendered notebook")
 async def format_notebook(
     request: Request,
     templates: Annotated[Jinja2Templates, Depends(get_templates)],

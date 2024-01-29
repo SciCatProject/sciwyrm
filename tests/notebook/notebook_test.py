@@ -31,7 +31,14 @@ def exec_notebook(nb_code: str) -> dict[str, Any]:
 def test_list_notebook_templates(sciwyrm_client):
     response = sciwyrm_client.get("/notebook/templates")
     assert response.status_code == 200
-    assert response.json() == [TEMPLATE_IDS["generic"]]
+    assert response.json() == [
+        {
+            "template_id": TEMPLATE_IDS["generic"],
+            "submission_name": "generic",
+            "display_name": "Generic",
+            "version": "1",
+        }
+    ]
 
 
 def test_notebook_is_valid_json(sciwyrm_client):
