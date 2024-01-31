@@ -26,7 +26,12 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi",
+    "email-validator",
+    "fastapi >= 0.108",
+    "jinja2",
+    "jsonschema",
+    "pydantic",
+    "pydantic-settings",
 ]
 dynamic = ["version"]
 

@@ -1,13 +1,17 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2023 SciCat Project (https://github.com/SciCatProject/sciwyrm)
+# Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 
 import os
+from pathlib import Path
 
 import pytest
 import scitacean
+from fastapi.testclient import TestClient
 from scitacean.testing.backend import add_pytest_option as add_backend_option
 from scitacean.testing.sftp import add_pytest_option as add_sftp_option
 from scitacean.transfer.sftp import SFTPFileTransfer
+
+from sciwyrm.config import AppConfig, app_config
 
 from .seed import seed_scicat
 
@@ -50,3 +54,22 @@ def scicat_client(
     real_client, _local_scicat, require_scicat_backend, require_sftp_fileserver
 ) -> scitacean.Client:
     return real_client
+
+
+def _app_config_override():
+    return AppConfig(template_dir=Path(__file__).resolve().parent.parent / "templates")
+
+
+@pytest.fixture(scope="session")
+def app():
+    from sciwyrm.main import app
+
+    old_overrides = dict(app.dependency_overrides)
+    app.dependency_overrides[app_config] = _app_config_override
+    yield app
+    app.dependency_overrides = old_overrides
+
+
+@pytest.fixture
+def sciwyrm_client(app):
+    return TestClient(app)

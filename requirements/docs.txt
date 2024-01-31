@@ -9,15 +9,15 @@
 -r test.txt
 accessible-pygments==0.0.4
     # via pydata-sphinx-theme
-alabaster==0.7.13
+alabaster==0.7.16
     # via sphinx
 autodoc-pydantic==2.0.1
     # via -r requirements/docs.in
-babel==2.13.1
+babel==2.14.0
     # via
     #   pydata-sphinx-theme
     #   sphinx
-comm==0.2.0
+comm==0.2.1
     # via ipykernel
 debugpy==1.8.0
     # via ipykernel
@@ -29,7 +29,7 @@ docutils==0.20.1
     #   sphinx
 imagesize==1.4.1
     # via sphinx
-ipykernel==6.27.1
+ipykernel==6.28.0
     # via -r requirements/docs.in
 markdown-it-py==3.0.0
     # via
@@ -45,14 +45,10 @@ nbsphinx==0.9.3
     # via -r requirements/docs.in
 nest-asyncio==1.5.8
     # via ipykernel
-psutil==5.9.6
+psutil==5.9.7
     # via ipykernel
-pydantic-settings==2.1.0
-    # via autodoc-pydantic
 pydata-sphinx-theme==0.14.0
     # via -r requirements/docs.in
-python-dotenv==1.0.0
-    # via pydantic-settings
 snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.2.6
