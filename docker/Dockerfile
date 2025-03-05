@@ -11,5 +11,5 @@ COPY . .
 RUN pip install "uvicorn[standard]"
 RUN pip install -e .
 
-# command to run 
+# command to run
 CMD ["uvicorn", "sciwyrm.main:app", "--host", "0.0.0.0"]
