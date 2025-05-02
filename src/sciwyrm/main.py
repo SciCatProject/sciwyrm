@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
-"""The SciWym application."""
+# Copyright (c) 2025 SciCat Project (https://github.com/SciCatProject/sciwyrm)
+"""The SciWyrm application."""
 
 import json
 from typing import Annotated
@@ -57,5 +57,5 @@ async def format_notebook(
         context=notebook.render_context(spec),
     )
     nb = json.loads(formatted.body)
-    nb["metadata"]["sciwyrm"] = notebook.notebook_metadata(spec)
+    notebook.insert_notebook_metadata(nb, spec)
     return JSONResponse(nb)

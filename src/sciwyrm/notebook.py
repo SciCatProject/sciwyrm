@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
+# Copyright (c) 2025 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Notebook handling."""
 
 from __future__ import annotations
 
+import uuid
 from datetime import datetime, timezone
 from typing import Any
 
@@ -117,3 +118,27 @@ def notebook_metadata(spec: NotebookSpecWithConfig) -> dict[str, Any]:
         "template_rendered_at": datetime.now(tz=timezone.utc).isoformat(),
         "template_hash": spec.config.template_hash,
     }
+
+
+def insert_notebook_metadata(
+    notebook: dict[str, Any], spec: NotebookSpecWithConfig
+) -> None:
+    """Insert template metadata into a rendered notebook."""
+    metadata = notebook_metadata(spec)
+    notebook["metadata"]["sciwyrm"] = metadata
+    notebook["cells"].insert(
+        0,
+        {
+            "cell_type": "markdown",
+            "id": uuid.uuid4().hex[:16],
+            "metadata": {},
+            "source": [
+                '<div style="font-size:x-small;padding-left:10pt">\n',
+                f"<span style=\"color:rgba(128,128,128,128)\">Template:</span> {metadata['template_submission_name']}<br>\n",  # noqa: E501
+                f"<span style=\"color:rgba(128,128,128,128)\">Id:</span> {metadata['template_id']} "  # noqa: E501
+                f"<span style=\"color: rgba(128,128,128,128);margin-left:10pt\"|>Version:</span> {metadata['template_version']} "  # noqa: E501
+                f"<span style=\"color: rgba(128,128,128,128);margin-left:10pt\"|>Rendered at:</span> {metadata['template_rendered_at']}\n",  # noqa: E501
+                "</div>",
+            ],
+        },
+    )
