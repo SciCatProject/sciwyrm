@@ -4,4 +4,4 @@ ipython
 nbconvert
 pytest
 pytest-randomly
-scitacean[test, sftp, ssh]
+scitacean[test, sftp]
