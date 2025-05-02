@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import scitacean
 from fastapi.testclient import TestClient
-from scitacean.testing.backend import add_pytest_option as add_backend_option
+from scitacean.testing.backend import add_pytest_options as add_backend_options
 from scitacean.testing.sftp import add_pytest_option as add_sftp_option
 from scitacean.transfer.sftp import SFTPFileTransfer
 
@@ -25,7 +25,7 @@ pytest_plugins = (
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
-    add_backend_option(parser)
+    add_backend_options(parser)
     add_sftp_option(parser)
 
 
