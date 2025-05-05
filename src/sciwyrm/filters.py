@@ -15,4 +15,4 @@ def json_escape(value: str) -> str:
     """Escape a string to be used in JSON."""
     # Use json.dumps to escape any characters that JSON can't handle.
     # THis adds quotation marks around the result, so strip those off.
-    return json.dumps(str(value))[1:-1]
+    return json.dumps(str(value).replace("\n", "\\n").replace("\r", "\\r"))[1:-1]

@@ -334,6 +334,23 @@ def test_notebook_escapes_control_sequence(sciwyrm_client):
     assert '\\"\\u001f\\"' in response.text
 
 
+def test_notebook_escapes_newline(sciwyrm_client):
+    response = sciwyrm_client.post(
+        "/notebook",
+        json={
+            "template_id": TEMPLATE_IDS["generic"],
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": "login",
+                "file_server_port": 22,
+                "dataset_pids": ["abc\n123"],
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert '\\"abc\\\\n123\\"' in response.text
+
+
 # This requires a way to either pass a custom connect function to the
 # SFTPFileTransfer in the notebook or a proper auth through SciCat.
 # The former is very tricky; so waiting for the latter for now.
