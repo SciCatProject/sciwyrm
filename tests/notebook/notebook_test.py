@@ -41,6 +41,35 @@ def test_list_notebook_templates(sciwyrm_client):
     ]
 
 
+def test_template_parameter_schema(sciwyrm_client):
+    response = sciwyrm_client.get(f"/notebook/schema/{TEMPLATE_IDS['generic']}")
+    assert response.is_success
+    params = response.json()["properties"]
+    assert params == {
+        "dataset_pids": {
+            "items": {"type": "string"},
+            "title": "Dataset Pids",
+            "type": "array",
+        },
+        "file_server_host": {"title": "File Server Host", "type": "string"},
+        "file_server_port": {"title": "File Server Port", "type": "integer"},
+        "scicat_url": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Scicat Url",
+            "type": "string",
+        },
+        "scicat_token": {
+            "default": "INSERT-YOUR-SCICAT-TOKEN-HERE",
+            "format": "password",
+            "title": "Scicat Token",
+            "type": "string",
+            "writeOnly": True,
+        },
+    }
+
+
 def test_notebook_is_valid_json(sciwyrm_client):
     response = sciwyrm_client.post(
         "/notebook",

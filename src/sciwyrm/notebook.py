@@ -98,6 +98,11 @@ def available_templates(config: AppConfig) -> list[TemplateSummary]:
     ]
 
 
+def template_parameter_schema(config: AppConfig, template_id: str) -> dict[str, object]:
+    """Return the parameter JSON schema for the given template."""
+    return get_notebook_template_config(template_id, config).parameter_schema
+
+
 def render_context(spec: NotebookSpecWithConfig) -> dict[str, Any]:
     """Return a dict that can be used to render a notebook template."""
     context = spec.parameters | notebook_metadata(spec)

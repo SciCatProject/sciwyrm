@@ -44,6 +44,17 @@ def _inject_app_config(
         raise RequestValidationError(errors) from None
 
 
+@app.get(
+    "/notebook/schema/{template_id}",
+    response_description="JSON schema for rendering notebook",
+)
+async def template_schema(
+    template_id: str, config: Annotated[AppConfig, Depends(app_config)]
+) -> dict[str, object]:
+    """Return the JSON schema for a notebook template."""
+    return notebook.template_parameter_schema(config, template_id)
+
+
 @app.post("/notebook", response_model=dict, response_description="Rendered notebook")
 async def format_notebook(
     request: Request,
