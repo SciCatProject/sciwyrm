@@ -132,7 +132,7 @@ def test_notebook_contains_only_expected_pids(sciwyrm_client):
     assert "9391" in response.text
 
 
-def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
+def test_notebook_contains_expected_file_server_host(sciwyrm_client):
     file_server_host = "test.host.cat"
     response = sciwyrm_client.post(
         "/notebook",
@@ -150,7 +150,7 @@ def test_notebook_contains_expected_file_serve_host(sciwyrm_client):
     assert file_server_host in response.text
 
 
-def test_notebook_contains_expected_file_serve_port(sciwyrm_client):
+def test_notebook_contains_expected_file_server_port(sciwyrm_client):
     file_server_port = 2200
     response = sciwyrm_client.post(
         "/notebook",
@@ -207,6 +207,34 @@ def test_notebook_contains_metadata(sciwyrm_client):
     assert metadata["template_authors"] == [
         {"name": "Jan-Lukas Wynen", "email": "jan-lukas.wynen@ess.eu"}
     ]
+
+
+@pytest.mark.parametrize(
+    "input_str,expected",
+    [
+        ("login", r"\"login\""),
+        ("'login'", r'''\"'login'\"'''),
+        ("\\login", r"\"\\login\""),
+        ('"""login"""', r"\"\\\"\\\"\\\"login\\\"\\\"\\\"\""),
+        ('"login', r"\"\\\"login\""),
+    ],
+)
+def test_notebook_string_quoting(sciwyrm_client, input_str: str, expected: str):
+    file_server_port = 2200
+    response = sciwyrm_client.post(
+        "/notebook",
+        json={
+            "template_id": TEMPLATE_IDS["generic"],
+            "parameters": {
+                "scicat_url": "https://test-url.sci.cat",
+                "file_server_host": input_str,
+                "file_server_port": file_server_port,
+                "dataset_pids": [],
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert expected in response.text
 
 
 def test_notebook_bad_parameter(sciwyrm_client):

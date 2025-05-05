@@ -1,16 +1,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (c) 2024 SciCat Project (https://github.com/SciCatProject/sciwyrm)
+# Copyright (c) 2025 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Template filters."""
 
 
-def quote(value: str) -> str:
+def quote(value: object) -> str:
     """Surround a string in appropriate quotes."""
-    value = str(value)
-    if '"' in value:
-        if "'" in value:
-            return f'"""{value}"""'
-        return f"'{value}'"
-    return f'"{value}"'
+    escaped = str(value).replace('"', r"\"")
+    return f'"{escaped}"'
 
 
 def json_escape(value: str) -> str:
