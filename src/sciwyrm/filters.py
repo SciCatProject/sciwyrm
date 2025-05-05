@@ -2,6 +2,8 @@
 # Copyright (c) 2025 SciCat Project (https://github.com/SciCatProject/sciwyrm)
 """Template filters."""
 
+import json
+
 
 def quote(value: object) -> str:
     """Surround a string in appropriate quotes."""
@@ -11,4 +13,6 @@ def quote(value: object) -> str:
 
 def json_escape(value: str) -> str:
     """Escape a string to be used in JSON."""
-    return str(value).replace("\\", "\\\\").replace('"', '\\"')
+    # Use json.dumps to escape any characters that JSON can't handle.
+    # THis adds quotation marks around the result, so strip those off.
+    return json.dumps(str(value))[1:-1]
