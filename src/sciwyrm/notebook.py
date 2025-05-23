@@ -141,9 +141,11 @@ def insert_notebook_metadata(
                 '<div style="font-size:x-small;padding-left:10pt">\n',
                 f"<span style=\"color:rgba(128,128,128,128)\">Template:</span> {metadata['template_submission_name']}<br>\n",  # noqa: E501
                 f"<span style=\"color:rgba(128,128,128,128)\">Id:</span> {metadata['template_id']} "  # noqa: E501
-                f"<span style=\"color: rgba(128,128,128,128);margin-left:10pt\"|>Version:</span> {metadata['template_version']} "  # noqa: E501
-                f"<span style=\"color: rgba(128,128,128,128);margin-left:10pt\"|>Rendered at:</span> {metadata['template_rendered_at']}\n",  # noqa: E501
+                f"<span style=\"color: rgba(128,128,128,128);margin-left:10pt\">Version:</span> {metadata['template_version']} "  # noqa: E501
+                f"<span style=\"color: rgba(128,128,128,128);margin-left:10pt\">Rendered at:</span> {metadata['template_rendered_at']}\n",  # noqa: E501
                 "</div>",
+                "",
+                "---",
             ],
         },
     )
