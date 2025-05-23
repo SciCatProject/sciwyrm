@@ -20,13 +20,7 @@ from .templates import (
     notebook_template_path,
 )
 
-import logging
-
 app = FastAPI()
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler())
 
 
 @app.get("/livez", response_description="The service is alive")
@@ -39,7 +33,7 @@ async def livez() -> str:
 async def list_templates(
     config: Annotated[AppConfig, Depends(app_config)]
 ) -> list[notebook.TemplateSummary]:
-    logger.info("Templates")
+    """Return a list of all available templates."""
     """Return a list of available notebook templates."""
     return notebook.available_templates(config)
 
@@ -75,7 +69,6 @@ async def format_notebook_from_json(
     templates: Annotated[Jinja2Templates, Depends(get_templates)],
     spec: notebook.NotebookSpecWithConfig = Depends(_inject_app_config),  # noqa: B008
 ) -> Response:
-
     """Format and return a notebook."""
     formatted = templates.TemplateResponse(
         name=notebook_template_path(spec.template_id),
