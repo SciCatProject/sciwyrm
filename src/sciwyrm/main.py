@@ -29,12 +29,10 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
 
 
-@app.get("/alive", response_description="The service is alive")
-async def list_templates(
-    config: Annotated[AppConfig, Depends(app_config)]
-) -> bool:
-    """Return a list of available notebook templates."""
-    return True
+@app.get("/livez", response_description="The service is alive")
+async def livez() -> str:
+    """Return 200 if the serve is alive."""
+    return "ok"
 
 
 @app.get("/templates", response_description="Available templates")
