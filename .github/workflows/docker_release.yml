@@ -28,7 +28,7 @@ jobs:
 
       - name: Create Docker Metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/scicatproject/sciwyrm
           flavor: latest=true # adds :latest tag to outputs.tags
