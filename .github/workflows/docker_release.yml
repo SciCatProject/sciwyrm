@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Bump version and push tag
         id: tag_version
@@ -28,7 +28,7 @@ jobs:
 
       - name: Create Docker Metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/scicatproject/sciwyrm
           flavor: latest=true # adds :latest tag to outputs.tags
@@ -37,7 +37,7 @@ jobs:
             type=raw,value=${{ steps.tag_version.outputs.new_tag }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -47,7 +47,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           platforms: linux/amd64,linux/arm64
           context: ./
